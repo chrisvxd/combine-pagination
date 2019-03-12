@@ -177,5 +177,13 @@ describe("combine-paginators", () => {
         ).toEqual(["a", "b", "c"]);
       });
     });
+
+    describe("_getSortKey", () => {
+      it("retrieves the sort key from a hit", () => {
+        expect(
+          combinedGetters._getSortKey({ test: true, popularity: 50 })
+        ).toEqual(50);
+      });
+    });
   });
 });
