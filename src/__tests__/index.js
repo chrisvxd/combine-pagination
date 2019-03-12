@@ -411,4 +411,29 @@ describe("combine-paginators", () => {
       ).toEqual([{ popularity: 8 }, { popularity: 7 }]);
     });
   });
+
+  describe("_trimPage", () => {
+    const pageA = [
+      { popularity: 8 },
+      { popularity: 6 },
+      { popularity: 4 },
+      { popularity: 3 }
+    ];
+
+    const pageB = [{ popularity: 7 }, { popularity: 5 }];
+
+    it("should trim the page to after the first hit, but before the last hit for the shortest page", () => {
+      const mergedPage = combinedGetters._mergeLastPage([[pageA], [pageB]]);
+
+      expect(
+        combinedGetters._trimPage({
+          page: mergedPage,
+          meta: {
+            firstHit: pageA[0],
+            shortestPage: pageB
+          }
+        })
+      ).toEqual([{ popularity: 8 }, { popularity: 7 }, { popularity: 6 }]);
+    });
+  });
 });
