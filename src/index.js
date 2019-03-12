@@ -24,7 +24,7 @@ export default ({ getters, sortKey, sortDirection = "desc" }) => {
       : _getSortKey(a) < _getSortKey(b);
   };
 
-  const _isBefore = (a, b, { eq = true }) => {
+  const _isBefore = (a, b, { eq = true } = {}) => {
     if (sortDirection === "asc") {
       return eq
         ? _getSortKey(a) <= _getSortKey(b)
