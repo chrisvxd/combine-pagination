@@ -88,7 +88,8 @@ export default ({ getters, sortKey, sortDirection = "desc" }) => {
           ? lastHitForGetter
           : lastHit,
       shortestPage:
-        !shortestPage || results.length < shortestPage.length
+        !shortestPage ||
+        (results.length > 0 && results.length < shortestPage.length)
           ? results
           : shortestPage
     };
