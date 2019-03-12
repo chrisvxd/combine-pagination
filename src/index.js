@@ -5,7 +5,7 @@ import "@babel/polyfill";
  * */
 export default ({ getters, sortKey, sortDirection = "desc" }) => {
   const state = {
-    allResultsForGetters: getters.map(() => []),
+    pages: getters.map(() => []),
     nextPageForGetters: getters.map(() => 0),
     meta: {}
   };
@@ -36,44 +36,44 @@ export default ({ getters, sortKey, sortDirection = "desc" }) => {
       : _getSortKey(a) > _getSortKey(b);
   };
 
-  const _getLastHitForGetter = (allResultsForGetters, getterIndex) => {
-    const allResultsForGetter = allResultsForGetters[getterIndex];
+  const _getLastHitForGetter = (pages, getterIndex) => {
+    const pagesForGetter = pages[getterIndex];
 
-    const lastResults =
-      allResultsForGetter.length > 0
-        ? allResultsForGetter[allResultsForGetter.length - 1]
+    const page =
+      pagesForGetter.length > 0
+        ? pagesForGetter[pagesForGetter.length - 1]
         : {};
 
-    const lastHits = lastResults || [];
+    const lastPage = page || [];
 
     const lastHitForGetter =
-      lastHits.length > 0 ? lastHits[lastHits.length - 1] : null;
+      lastPage.length > 0 ? lastPage[lastPage.length - 1] : null;
 
     return lastHitForGetter;
   };
 
-  const _mergeLastResults = allResultsForGetters =>
-    allResultsForGetters
+  const _mergeLastPage = pages =>
+    pages
       .reduce(
-        (acc, resultsForGetter) => [
+        (acc, pagesForGetter) => [
           ...acc,
-          ...resultsForGetter[resultsForGetter.length - 1]
+          ...pagesForGetter[pagesForGetter.length - 1]
         ],
         []
       )
       .sort((a, b) => _isAfter(b, a));
 
-  const _trimResults = ({ hits, meta }) => {
+  const _trimPage = ({ page, meta }) => {
     const { firstHit, shortestPage } = meta;
     const lastHitForShortestPage = shortestPage[shortestPage.length - 1];
 
-    const trimmedHits = hits.filter(
+    const trimmedPage = page.filter(
       hit =>
         _isAfter(hit, firstHit) &&
         _isBefore(hit, lastHitForShortestPage, { eq: false })
     );
 
-    return [...hits, ...trimmedHits];
+    return [...page, ...trimmedPage];
   };
 
   const _getMeta = ({ currentMeta, results }) => {
@@ -96,16 +96,13 @@ export default ({ getters, sortKey, sortDirection = "desc" }) => {
   };
 
   const _shouldProcessPage = ({
-    allResultsForGetters,
+    pages,
     nextPageForGetter,
     getterIndex,
     meta
   }) => {
     const { lastHit } = meta;
-    const lastHitForGetter = _getLastHitForGetter(
-      allResultsForGetters,
-      getterIndex
-    );
+    const lastHitForGetter = _getLastHitForGetter(pages, getterIndex);
 
     if (nextPageForGetter === null) {
       return false;
@@ -133,7 +130,7 @@ export default ({ getters, sortKey, sortDirection = "desc" }) => {
 
       if (
         _shouldProcessPage({
-          allResultsForGetters: state.allResultsForGetters,
+          pages: state.pages,
           meta: state.meta,
           nextPageForGetter,
           getterIndex
@@ -142,7 +139,7 @@ export default ({ getters, sortKey, sortDirection = "desc" }) => {
         const results = await getter(nextPageForGetter);
 
         if (results) {
-          state.allResultsForGetters[getterIndex].push(results);
+          state.pages[getterIndex].push(results);
 
           state.meta = _getMeta({
             currentMeta: state.meta,
@@ -154,14 +151,14 @@ export default ({ getters, sortKey, sortDirection = "desc" }) => {
       }
     }
 
-    const mergedHits = _mergeLastResults(state.allResultsForGetters);
+    const mergedPage = _mergeLastPage(state.pages);
 
-    const trimmedHits = _trimResults({
-      hits: mergedHits,
+    const trimmedPage = _trimPage({
+      page: mergedPage,
       meta: state.meta
     });
 
-    return trimmedHits;
+    return trimmedPage;
   };
 
   return {
@@ -171,8 +168,8 @@ export default ({ getters, sortKey, sortDirection = "desc" }) => {
     _getSortKey,
     _isAfter,
     _isBefore,
-    _mergeLastResults,
+    _mergeLastPage,
     _shouldProcessPage,
-    _trimResults
+    _trimPage
   };
 };
