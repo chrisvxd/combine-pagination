@@ -5,8 +5,8 @@ import "@babel/polyfill";
  * */
 export default ({ getters, sortKey, sortDirection = "desc" }) => {
   const state = {
-    allResultsForQueries: getters.map(() => []),
-    nextPageForQueries: getters.map(() => 0),
+    allResultsForGetters: getters.map(() => []),
+    nextPageForGetters: getters.map(() => 0),
     meta: {}
   };
 
@@ -36,8 +36,8 @@ export default ({ getters, sortKey, sortDirection = "desc" }) => {
       : _getSortKey(a) > _getSortKey(b);
   };
 
-  const _getLastHitForGetter = (allResultsForQueries, getterIndex) => {
-    const allResultsForGetter = allResultsForQueries[getterIndex];
+  const _getLastHitForGetter = (allResultsForGetters, getterIndex) => {
+    const allResultsForGetter = allResultsForGetters[getterIndex];
 
     const lastResults =
       allResultsForGetter.length > 0
@@ -52,8 +52,8 @@ export default ({ getters, sortKey, sortDirection = "desc" }) => {
     return lastHitForGetter;
   };
 
-  const _mergeLastResults = allResultsForQueries =>
-    allResultsForQueries
+  const _mergeLastResults = allResultsForGetters =>
+    allResultsForGetters
       .reduce(
         (acc, resultsForGetter) => [
           ...acc,
@@ -61,7 +61,7 @@ export default ({ getters, sortKey, sortDirection = "desc" }) => {
         ],
         []
       )
-      .sort((a, b) => b.datePosted - a.datePosted);
+      .sort((a, b) => _isAfter(b, a));
 
   const _trimResults = ({ hits, meta }) => {
     const { firstHit, shortestPage } = meta;
@@ -95,14 +95,14 @@ export default ({ getters, sortKey, sortDirection = "desc" }) => {
   };
 
   const _shouldProcessPage = ({
-    allResultsForQueries,
+    allResultsForGetters,
     nextPageForGetter,
     getterIndex,
     meta
   }) => {
     const { lastHit } = meta;
     const lastHitForGetter = _getLastHitForGetter(
-      allResultsForQueries,
+      allResultsForGetters,
       getterIndex
     );
 
@@ -128,11 +128,11 @@ export default ({ getters, sortKey, sortDirection = "desc" }) => {
 
     for (let getterIndex = 0; getterIndex < getters.length; getterIndex++) {
       const getter = getters[getterIndex];
-      const nextPageForGetter = state.nextPageForQueries[getterIndex];
+      const nextPageForGetter = state.nextPageForGetters[getterIndex];
 
       if (
         _shouldProcessPage({
-          allResultsForQueries: state.allResultsForQueries,
+          allResultsForGetters: state.allResultsForGetters,
           meta: state.meta,
           nextPageForGetter,
           getterIndex
@@ -141,19 +141,19 @@ export default ({ getters, sortKey, sortDirection = "desc" }) => {
         const results = await getter(nextPageForGetter);
 
         if (results) {
-          state.allResultsForQueries[getterIndex].push(results);
+          state.allResultsForGetters[getterIndex].push(results);
 
           state.meta = _getMeta({
             currentMeta: state.meta,
             results
           });
         } else {
-          state.nextPageForQueries[getterIndex] = null;
+          state.nextPageForGetters[getterIndex] = null;
         }
       }
     }
 
-    const mergedHits = _mergeLastResults(state.allResultsForQueries);
+    const mergedHits = _mergeLastResults(state.allResultsForGetters);
 
     const trimmedHits = _trimResults({
       hits: mergedHits,
