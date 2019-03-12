@@ -113,7 +113,7 @@ export default ({ getters, sortKey, sortDirection = "desc" }) => {
     if (
       lastHitForGetter &&
       lastHit &&
-      lastHitForGetter.objectID === lastHit.objectID
+      JSON.stringify(lastHitForGetter) === JSON.stringify(lastHit)
     ) {
       return false;
     }
