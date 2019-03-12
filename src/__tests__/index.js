@@ -354,4 +354,53 @@ describe("combine-paginators", () => {
       ]);
     });
   });
+
+  describe("_shouldProcessPage", () => {
+    // Options for a successful pass
+    // NB, pages at this point are _always sorted_.
+    const options = {
+      pages: [
+        [
+          [{ popularity: 8 }, { popularity: 7 }],
+          [{ popularity: 6 }, { popularity: 5 }]
+        ],
+        [
+          [{ popularity: 4 }, { popularity: 3 }],
+          [{ popularity: 2 }, { popularity: 1 }]
+        ]
+      ],
+      nextPageForGetter: 1,
+      getterIndex: 0,
+      meta: {
+        lastHit: { popularity: 1 }
+      }
+    };
+
+    it("should return false when nextPageForGetter === null", () => {
+      expect(
+        combinedGetters._shouldProcessPage({
+          ...options,
+          nextPageForGetter: null
+        })
+      ).toBe(false);
+    });
+
+    // This test is fundamental to the functionality, ensuring that we only run the next query when
+    // another getter has exceeded this ones bounds
+    it("should return false when this getter already returned the last result avaiable in memory", () => {
+      expect(
+        combinedGetters._shouldProcessPage({
+          ...options,
+          meta: {
+            ...options.meta,
+            lastHit: { popularity: 5 }
+          }
+        })
+      ).toBe(false);
+    });
+
+    it("should return true when this getter hasn't already returned the last result available in memory, and nextPageForGetter is valid", () => {
+      expect(combinedGetters._shouldProcessPage(options)).toBe(true);
+    });
+  });
 });
