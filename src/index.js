@@ -61,7 +61,7 @@ export default ({ getters, sortKey, sortDirection = "desc" }) => {
         ],
         []
       )
-      .sort((a, b) => _isAfter(b, a));
+      .sort((a, b) => _isAfter(a, b));
 
   const _trimPage = ({ page, meta }) => {
     const { firstHit, shortestPage } = meta;
