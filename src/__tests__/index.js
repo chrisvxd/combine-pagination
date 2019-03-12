@@ -332,4 +332,26 @@ describe("combine-paginators", () => {
       });
     });
   });
+
+  describe("_mergeLastPage", () => {
+    it("should merge the last page for each getter", () => {
+      expect(
+        combinedGetters._mergeLastPage([
+          [
+            [{ popularity: 8 }, { popularity: 7 }],
+            [{ popularity: 5 }, { popularity: 6 }]
+          ],
+          [
+            [{ popularity: 4 }, { popularity: 3 }],
+            [{ popularity: 1 }, { popularity: 2 }]
+          ]
+        ])
+      ).toEqual([
+        { popularity: 6 },
+        { popularity: 5 },
+        { popularity: 2 },
+        { popularity: 1 }
+      ]);
+    });
+  });
 });
