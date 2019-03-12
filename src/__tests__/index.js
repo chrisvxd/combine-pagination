@@ -403,4 +403,12 @@ describe("combine-paginators", () => {
       expect(combinedGetters._shouldProcessPage(options)).toBe(true);
     });
   });
+
+  describe("_sortPage", () => {
+    it("should sort the results", () => {
+      expect(
+        combinedGetters._sortPage([{ popularity: 7 }, { popularity: 8 }])
+      ).toEqual([{ popularity: 8 }, { popularity: 7 }]);
+    });
+  });
 });
