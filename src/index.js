@@ -75,7 +75,7 @@ export default ({ getters, sortKey, sortDirection = "desc" }) => {
         _isBefore(hit, lastHitForShortestPage, { eq: false })
     );
 
-    return [...page, ...trimmedPage];
+    return trimmedPage;
   };
 
   const _getMeta = ({ currentMeta, results }) => {
