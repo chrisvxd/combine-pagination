@@ -52,16 +52,18 @@ export default ({ getters, sortKey, sortDirection = "desc" }) => {
     return lastHitForGetter;
   };
 
+  const _sortPage = hits => hits.sort((a, b) => _isAfter(a, b));
+
   const _mergeLastPage = pages =>
-    pages
-      .reduce(
+    _sortPage(
+      pages.reduce(
         (acc, pagesForGetter) => [
           ...acc,
           ...pagesForGetter[pagesForGetter.length - 1]
         ],
         []
       )
-      .sort((a, b) => _isAfter(a, b));
+    );
 
   const _trimPage = ({ page, meta }) => {
     const { firstHit, shortestPage } = meta;
@@ -139,7 +141,7 @@ export default ({ getters, sortKey, sortDirection = "desc" }) => {
         const results = await getter(nextPageForGetter);
 
         if (results) {
-          state.pages[getterIndex].push(results);
+          state.pages[getterIndex].push(_sortPage(results));
 
           state.meta = _getMeta({
             currentMeta: state.meta,
@@ -170,6 +172,7 @@ export default ({ getters, sortKey, sortDirection = "desc" }) => {
     _isBefore,
     _mergeLastPage,
     _shouldProcessPage,
+    _sortPage,
     _trimPage
   };
 };

@@ -334,7 +334,7 @@ describe("combine-paginators", () => {
   });
 
   describe("_mergeLastPage", () => {
-    it("should merge the last page for each getter", () => {
+    it("should merge the last page for each getter, and sort them", () => {
       expect(
         combinedGetters._mergeLastPage([
           [
