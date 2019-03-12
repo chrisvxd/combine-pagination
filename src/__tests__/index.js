@@ -433,7 +433,12 @@ describe("combine-paginators", () => {
             shortestPage: pageB
           }
         })
-      ).toEqual([{ popularity: 8 }, { popularity: 7 }, { popularity: 6 }]);
+      ).toEqual([
+        { popularity: 8 },
+        { popularity: 7 },
+        { popularity: 6 },
+        { popularity: 5 }
+      ]);
     });
   });
 });

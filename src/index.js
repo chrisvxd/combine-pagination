@@ -70,9 +70,7 @@ export default ({ getters, sortKey, sortDirection = "desc" }) => {
     const lastHitForShortestPage = shortestPage[shortestPage.length - 1];
 
     const trimmedPage = page.filter(
-      hit =>
-        _isAfter(hit, firstHit) &&
-        _isBefore(hit, lastHitForShortestPage, { eq: false })
+      hit => _isAfter(hit, firstHit) && _isBefore(hit, lastHitForShortestPage)
     );
 
     return trimmedPage;
