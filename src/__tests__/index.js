@@ -258,5 +258,78 @@ describe("combine-paginators", () => {
         });
       });
     });
+
+    describe("_isBefore", () => {
+      describe("with sortDirection='desc'", () => {
+        it("returns true if a's sort key is greater than b's sort key", () => {
+          expect(
+            combinedGetters._isBefore({ popularity: 100 }, { popularity: 50 })
+          ).toBe(true);
+        });
+
+        it("returns true if a's sort key is equal to b's sort key", () => {
+          expect(
+            combinedGetters._isBefore({ popularity: 50 }, { popularity: 50 })
+          ).toBe(true);
+        });
+
+        it("returns false if a's sort key is equal to b's sort key, when options.eq === false", () => {
+          expect(
+            combinedGetters._isBefore(
+              { popularity: 50 },
+              { popularity: 50 },
+              { eq: false }
+            )
+          ).toBe(false);
+        });
+
+        it("returns false if a's sort key is less than b's sort key", () => {
+          expect(
+            combinedGetters._isBefore({ popularity: 50 }, { popularity: 100 })
+          ).toBe(false);
+        });
+      });
+
+      describe("with sortDirection='asc'", () => {
+        beforeEach(() => {
+          combinedGetters = combinePagination({
+            getters: [
+              page => getData(modernHats, page),
+              page => getData(oldHats, page)
+            ],
+            sortKey: "popularity",
+            sortDirection: "asc"
+          });
+        });
+
+        it("returns true if a's sort key is less than b's sort key", () => {
+          expect(
+            combinedGetters._isBefore({ popularity: 50 }, { popularity: 100 })
+          ).toBe(true);
+        });
+
+        it("returns true if a's sort key is equal to b's sort key", () => {
+          expect(
+            combinedGetters._isBefore({ popularity: 50 }, { popularity: 50 })
+          ).toBe(true);
+        });
+
+        it("returns false if a's sort key is equal to b's sort key, when options.eq === false", () => {
+          expect(
+            combinedGetters._isBefore(
+              { popularity: 50 },
+              { popularity: 50 },
+              { eq: false }
+            )
+          ).toBe(false);
+        });
+
+        it("returns false if a's sort key is greater than b's sort key", () => {
+          expect(
+            combinedGetters._isBefore({ popularity: 100 }, { popularity: 50 })
+          ).toBe(false);
+        });
+      });
+    });
   });
 });
