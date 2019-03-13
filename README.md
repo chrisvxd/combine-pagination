@@ -233,12 +233,6 @@ That's it. Each time you call `getNext()`, you'll retreive the next set of sorte
 - Paginating across multiple Algolia queries, such as one geo location query and one not.
 - Paginating across different services.
 
-## Fuzzy Pagination
-
-Each time you execute `getNext()`, you can't be sure how many results you're going to receive. We call this **Fuzzy Pagination**, which returns `0 - n` results for any given page with page size `n`. This technique is best suited for infinity scroll type use cases.
-
-In normal pagination, you would receive `n` results for each page, only receiving `0 - n` results on the final page.
-
 ## Framed Range Intersecting
 
 Intersecting ranges is a technique for finding values that overlap in two sets of data. For example:
@@ -261,6 +255,12 @@ For example:
 - Framed Intersection of [-1, 34] & [0, 4] is [-1, 0, 4]
 - Framed Intersection of [0, 3] & [4, 4] is [0, 3]
 - Framed Intersection of [0, 3] & [2, 4] & [1, 2] is [0, 1, 2, 2]
+
+## Fuzzy Pagination
+
+Each time you execute `getNext()`, you can't be sure how many results you're going to receive. We call this **Fuzzy Pagination**, which returns `0 - n` results for any given page with page size `n`. This technique is best suited for infinity scroll type use cases.
+
+In normal pagination, you would receive `n` results for each page, only receiving `0 - n` results on the final page.
 
 ## License
 
