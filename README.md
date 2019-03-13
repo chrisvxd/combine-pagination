@@ -4,8 +4,8 @@
 
 - **Great for Infinity Scroll**: easily support multiple data sources in your infinity scroll.
 - **Retain order**: your data is always in order, even when it comes from different sources.
-- **Service agnostic**: work with any data service, whether REST, GraphQL, Algolia or more.
-- **Mix-and-match services**: mix and match data services as you see fit, making one query from GraphQL and one from Algolia.
+- **Service agnostic**: work with any data service, whether REST, GraphQL, Algolia or another.
+- **Mix-and-match services**: mix data services as you see fit, making one query from GraphQL and one from Algolia.
 - **Efficient**: only fetch data when needed for that data source.
 
 Used in production at https://wellpaid.io.
