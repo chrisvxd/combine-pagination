@@ -53,8 +53,8 @@ const index = algoliasearch({
 
 const combinedGetters = combinePagination({
   getters: [
-    page => index.query({ page, hitsPerPage: 15, query: "Baseball cap" }),
-    page => index.query({ page, hitsPerPage: 15, query: "Top hat" })
+    async page => (await index.query({ page, hitsPerPage: 15, query: "Baseball cap" })).hits,
+    async page => (await index.query({ page, hitsPerPage: 15, query: "Top hat" })).hits
   ],
   sortKey: "popularity"
 });
