@@ -156,10 +156,10 @@ This looks fine, until you query the second page, which will look like this
 ];
 ```
 
-If we combine these results, you’ll notice that now the **results are out of order**. Sure, we could resort our entire data set, but this has some problems:
+If we combine these results, you’ll notice that now the **results are out of order**. Sure, we could re-sort our entire data set, but this has some problems:
 
 1. Reordering UI is confusing - if we’re rendering `hats` in a UI, such as an infinity scroll, it will cause the UI to reorder and confuse the user.
-2. Inefficient sort - resorting the entire data set on each pagination is highly inefficient.
+2. Inefficient sort - re-sorting the entire data set on each pagination is highly inefficient.
 3. Unnecessary data request - depending on the order of the data, getting both data sets at once might be unnecessary, especially if a network request is involved.
 
 ## The Solution
