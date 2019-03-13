@@ -22,9 +22,13 @@ or
 yarn add combine-pagination
 ```
 
-## Quick Start
+## Quick examples
 
-If you already understand the problem space, here’s a quick example for paginating across two data sets:
+If you already understand [the problem](#the-problem), here are some quick examples for paginating across multiple data sets in different scenarios.
+
+### Generic
+
+Paginate data from two generic data sets.
 
 ```js
 const combinedGetters = combinePagination({
@@ -32,8 +36,29 @@ const combinedGetters = combinePagination({
   sortKey: "popularity"
 });
 
-const pageOne = combinedGetters.getNext();
-const pageTwo = combinedGetters.getNext();
+const pageOne = await combinedGetters.getNext();
+const pageTwo = await combinedGetters.getNext();
+```
+
+### Algolia
+
+Paginate data from two distinct algolia queries, each with a different keyword.
+
+```js
+const index = algoliasearch({
+  //...
+}).initIndex("hats");
+
+const combinedGetters = combinePagination({
+  getters: [
+    page => index.query({ page, hitsPerPage: 15, query: "Baseball cap" }),
+    page => index.query({ page, hitsPerPage: 15, query: "Top hat" })
+  ],
+  sortKey: "popularity"
+});
+
+const pageOne = await combinedGetters.getNext();
+const pageTwo = await combinedGetters.getNext();
 ```
 
 ## The Problem
@@ -151,7 +176,7 @@ const combinedGetters = combinePagination({
 And query the first page:
 
 ```js
-const page = combinedGetters.getNext();
+const page = await combinedGetters.getNext();
 ```
 
 Resulting in:
