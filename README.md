@@ -2,11 +2,11 @@
 
 `combine-pagination` is a JavaScript library for paginating across multiple data sources at once, whilst retaining the sort order.
 
-* **Great for Infinity Scroll**: easily support multiple data sources in your infinity scroll.
-* **Retain order**: your data is always in order, even when it comes from different sources.
-* **Service agnostic**: work with any data service, whether REST, GraphQL, Algolia or more.
-* **Mix-and-match services**: mix and match data services as you see fit, making one query from GraphQL and one from Algolia.
-* **Efficient**: only fetch data when needed for that data source.
+- **Great for Infinity Scroll**: easily support multiple data sources in your infinity scroll.
+- **Retain order**: your data is always in order, even when it comes from different sources.
+- **Service agnostic**: work with any data service, whether REST, GraphQL, Algolia or more.
+- **Mix-and-match services**: mix and match data services as you see fit, making one query from GraphQL and one from Algolia.
+- **Efficient**: only fetch data when needed for that data source.
 
 Used in production at https://wellpaid.io.
 
@@ -208,6 +208,6 @@ In normal pagination, you would receive `n` results for each page, only receivin
 
 ## Use cases
 
-* Using infinity scroll across multiple data sources.
-* Paginating across multiple Algolia queries, such as one geo location query and one not.
-* Paginating across different services.
+- Using infinity scroll across multiple data sources.
+- Paginating across multiple Algolia queries, such as one geo location query and one not.
+- Paginating across different services.
