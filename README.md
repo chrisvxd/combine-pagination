@@ -1,5 +1,7 @@
 # combine-pagination 🦑
 
+[![JavaScript Style Guide](https://img.shields.io/badge/code_style-prettier-brightgreen.svg)](https://prettier.io)
+
 `combine-pagination` is a JavaScript library for paginating across multiple data sources at once, whilst retaining the sort order.
 
 - **Great for Infinity Scroll**: easily support multiple data sources in your infinity scroll.
@@ -259,3 +261,7 @@ For example:
 - Framed Intersection of [-1, 34] & [0, 4] is [-1, 0, 4]
 - Framed Intersection of [0, 3] & [4, 4] is [0, 3]
 - Framed Intersection of [0, 3] & [2, 4] & [1, 2] is [0, 1, 2, 2]
+
+## License
+
+MIT © [Chris Villa](http://www.chrisvilla.co.uk)
