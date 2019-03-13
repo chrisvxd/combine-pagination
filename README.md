@@ -1,6 +1,6 @@
 # combine-pagination 🦑
 
-[![JavaScript Style Guide](https://img.shields.io/badge/code_style-prettier-brightgreen.svg)](https://prettier.io)
+[![NPM](https://img.shields.io/npm/v/combine-pagination.svg)](https://www.npmjs.com/package/combine-pagination) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-prettier-brightgreen.svg)](https://prettier.io)
 
 `combine-pagination` is a JavaScript library for paginating across multiple data sources at once, whilst retaining the sort order.
 
