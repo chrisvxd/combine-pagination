@@ -51,7 +51,7 @@ const modernHats = [
     popularity: 50
   },
   {
-    name: "Golf",
+    name: "Flat Cap",
     popularity: 20
   }
 ];
@@ -66,7 +66,7 @@ const oldHats = [
     popularity: 15
   },
   {
-    name: "Bowler Cap",
+    name: "Bowler Hat",
     popularity: 9
   }
 ];
@@ -119,11 +119,11 @@ This looks fine, until you query the second page, which will look like this
 ```js
 [
   {
-    name: "Golf",
+    name: "Flat Cap",
     popularity: 20
   },
   {
-    name: "Bowler Cap",
+    name: "Bowler Hat",
     popularity: 9
   }
 ];
@@ -180,7 +180,7 @@ The second time we run `getNext()`, we get the next set of data, but this time i
 ```js
 [
   {
-    name: "Golf",
+    name: "Flat Cap",
     popularity: 20
   },
   {
@@ -188,7 +188,7 @@ The second time we run `getNext()`, we get the next set of data, but this time i
     popularity: 15
   },
   {
-    name: "Bowler Cap",
+    name: "Bowler Hat",
     popularity: 9
   }
 ];
@@ -196,7 +196,7 @@ The second time we run `getNext()`, we get the next set of data, but this time i
 
 > Note to self: the above result might be incorrect when compared with actual results. Need tests.
 
-`combine-pagination` noticed that "Beret", which was held back from the first set of results, intersects "Golf" and "Bowler Cap", so has inserted it and sorted the page.
+`combine-pagination` noticed that "Beret", which was held back from the first set of results, intersects "Flat Cap" and "Bowler Hat", so has inserted it and sorted the page.
 
 That's it. Each time you call `getNext()`, you'll retreive the next set of data, until the data source is exhausted.
 
