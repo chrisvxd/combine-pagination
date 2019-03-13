@@ -156,13 +156,15 @@ This looks fine, until you query the second page, which will look like this
 
 If we combine these results, you’ll notice that now the **results are out of order**. Sure, we could resort our entire data set, but this has some problems:
 
-1. Reordering UI is confusing - If we’re rendering `hats` in a UI, such as an infinity scroll, it will cause the UI to reorder and confuse the user.
+1. Reordering UI is confusing - if we’re rendering `hats` in a UI, such as an infinity scroll, it will cause the UI to reorder and confuse the user.
 2. Inefficient sort - resorting the entire data set on each pagination is highly inefficient.
-3. Unnecessary data request - depending on the order, getting both data sets at once might be unnecessary.
+3. Unnecessary data request - depending on the order of the data, getting both data sets at once might be unnecessary, especially if a network request is involved.
 
 ## The Solution
 
-Using the data set from above, let's combine the getters using `combine-pagination`:
+Using a technique (currently) called [Framed Range Intersection](#framed-range-intersection), we can conservatively hold back trailing data from the first page that we think might overlap with subsequent pages. In the example above, it would mean holding back "Beret" until the next page is retrieved.
+
+`combine-pagination` implements this technique. Let's try again using the above data set:
 
 ```js
 import combinePagination from "combine-pagination";
@@ -198,7 +200,7 @@ Resulting in:
 ];
 ```
 
-This time we only returned three results. `combine-pagination` is only showing intersecting data, holding one result back until it receives the next data set. This means you can't define exactly how many results you want to receive. See [Fuzzy Pagination]().
+As expected, we only received three results. `combine-pagination` is only showing intersecting data, holding "Beret" back until it receives the next data set. Because of this, you can't define exactly how many results you want to receive. See [Fuzzy Pagination](#fuzzy-pagination).
 
 The second time we run `getNext()`, we get the next set of data, but this time in the correct order:
 
@@ -219,11 +221,9 @@ The second time we run `getNext()`, we get the next set of data, but this time i
 ];
 ```
 
-> Note to self: the above result might be incorrect when compared with actual results. Need tests.
-
 `combine-pagination` noticed that "Beret", which was held back from the first set of results, intersects "Flat Cap" and "Bowler Hat", so has inserted it and sorted the page.
 
-That's it. Each time you call `getNext()`, you'll retreive the next set of data, until the data source is exhausted.
+That's it. Each time you call `getNext()`, you'll retreive the next set of sorted data until the getters are exhausted.
 
 ## Use cases
 
