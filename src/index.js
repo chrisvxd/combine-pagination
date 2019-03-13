@@ -81,7 +81,7 @@ export default ({ getters, sortKey, sortDirection = "desc" }) => {
       []
     );
 
-  const getNext = async () => {
+  const getNext = async userOptions => {
     // We recalculate these meta params on each page
     state.meta.firstHit = null;
     state.meta.earliestLastHit = null;
@@ -97,7 +97,7 @@ export default ({ getters, sortKey, sortDirection = "desc" }) => {
           getterIndex
         })
       ) {
-        const results = await getter(nextPageForGetter);
+        const results = await getter(nextPageForGetter, userOptions);
 
         if (results.length > 0) {
           state.data[getterIndex] = _sortPage(results);
