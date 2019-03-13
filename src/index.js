@@ -5,7 +5,7 @@ import "@babel/polyfill";
  * */
 export default ({ getters, sortKey, sortDirection = "desc" }) => {
   const state = {
-    pages: getters.map(() => []),
+    data: getters.map(() => []),
     nextPageForGetters: getters.map(() => 0),
     meta: {}
   };
@@ -36,93 +36,55 @@ export default ({ getters, sortKey, sortDirection = "desc" }) => {
       : _getSortKey(a) > _getSortKey(b);
   };
 
-  const _getLastHitForGetter = (pages, getterIndex) => {
-    const pagesForGetter = pages[getterIndex];
+  const _sortPage = hits => hits.sort((a, b) => b[sortKey] - a[sortKey]);
 
-    const page =
-      pagesForGetter.length > 0
-        ? pagesForGetter[pagesForGetter.length - 1]
-        : {};
-
-    const lastPage = page || [];
-
-    const lastHitForGetter =
-      lastPage.length > 0 ? lastPage[lastPage.length - 1] : null;
-
-    return lastHitForGetter;
-  };
-
-  const _sortPage = hits => hits.sort((a, b) => _isAfter(a, b));
-
-  const _mergeLastPage = pages =>
+  const _mergeData = data =>
     _sortPage(
-      pages.reduce(
-        (acc, pagesForGetter) => [
-          ...acc,
-          ...pagesForGetter[pagesForGetter.length - 1]
-        ],
-        []
-      )
+      data.reduce((acc, hitsForGetter) => [...acc, ...hitsForGetter], [])
     );
 
   const _trimPage = ({ page, meta }) => {
-    const { firstHit, shortestPage } = meta;
-    const lastHitForShortestPage = shortestPage[shortestPage.length - 1];
+    const { earliestLastHit, firstHit } = meta;
+    // const lastHitForShortestPage = shortestPage[shortestPage.length - 1];
 
     const trimmedPage = page.filter(
-      hit => _isAfter(hit, firstHit) && _isBefore(hit, lastHitForShortestPage)
+      hit => _isAfter(hit, firstHit) && _isBefore(hit, earliestLastHit)
     );
 
     return trimmedPage;
   };
 
   const _getMeta = ({ currentMeta, results }) => {
-    const { firstHit, lastHit, shortestPage } = currentMeta;
+    const { earliestLastHit, firstHit } = currentMeta;
     const lastHitForGetter = results[results.length - 1];
 
     return {
       firstHit:
         !firstHit || _isAfter(firstHit, results[0]) ? results[0] : firstHit,
-      lastHit:
-        !lastHit || _isAfter(lastHitForGetter, lastHit)
+      earliestLastHit:
+        !earliestLastHit || _isBefore(lastHitForGetter, earliestLastHit)
           ? lastHitForGetter
-          : lastHit,
-      shortestPage:
-        !shortestPage ||
-        (results.length > 0 && results.length < shortestPage.length)
-          ? results
-          : shortestPage
+          : earliestLastHit
     };
   };
 
-  const _shouldProcessPage = ({
-    pages,
-    nextPageForGetter,
-    getterIndex,
-    meta
-  }) => {
-    const { lastHit } = meta;
-    const lastHitForGetter = _getLastHitForGetter(pages, getterIndex);
+  const _shouldProcessPage = ({ data, nextPageForGetter, getterIndex }) =>
+    data[getterIndex].length === 0 && nextPageForGetter !== null;
 
-    if (nextPageForGetter === null) {
-      return false;
-    }
-
-    if (
-      lastHitForGetter &&
-      lastHit &&
-      JSON.stringify(lastHitForGetter) === JSON.stringify(lastHit)
-    ) {
-      return false;
-    }
-
-    return true;
-  };
+  // NB Not hugely efficient
+  const _tidyData = ({ data, trimmedPage }) =>
+    data.reduce(
+      (acc, getterData) => [
+        ...acc,
+        getterData.filter(hit => trimmedPage.indexOf(hit) === -1)
+      ],
+      []
+    );
 
   const getNext = async () => {
     // We recalculate these meta params on each page
     state.meta.firstHit = null;
-    state.meta.shortestPage = null;
+    state.meta.earliestLastHit = null;
 
     for (let getterIndex = 0; getterIndex < getters.length; getterIndex++) {
       const getter = getters[getterIndex];
@@ -130,45 +92,59 @@ export default ({ getters, sortKey, sortDirection = "desc" }) => {
 
       if (
         _shouldProcessPage({
-          pages: state.pages,
-          meta: state.meta,
+          data: state.data,
           nextPageForGetter,
           getterIndex
         })
       ) {
         const results = await getter(nextPageForGetter);
 
-        if (results) {
-          state.pages[getterIndex].push(_sortPage(results));
+        if (results.length > 0) {
+          state.data[getterIndex] = _sortPage(results);
 
           state.meta = _getMeta({
             currentMeta: state.meta,
+            getterIndex,
             results
           });
+
+          state.nextPageForGetters[getterIndex] = nextPageForGetter + 1;
         } else {
           state.nextPageForGetters[getterIndex] = null;
+        }
+      } else {
+        if (state.data[getterIndex].length > 0) {
+          state.meta = _getMeta({
+            currentMeta: state.meta,
+            getterIndex,
+            results: state.data[getterIndex]
+          });
         }
       }
     }
 
-    const mergedPage = _mergeLastPage(state.pages);
+    const page = _mergeData(state.data);
 
-    const trimmedPage = _trimPage({
-      page: mergedPage,
-      meta: state.meta
-    });
+    const trimmedPage =
+      page.length > 0
+        ? _trimPage({
+            page,
+            meta: state.meta
+          })
+        : page;
+
+    state.data = _tidyData({ data: state.data, trimmedPage });
 
     return trimmedPage;
   };
 
   return {
     getNext,
-    _getLastHitForGetter,
     _getMeta,
     _getSortKey,
     _isAfter,
     _isBefore,
-    _mergeLastPage,
+    _mergeData,
     _shouldProcessPage,
     _sortPage,
     _trimPage
