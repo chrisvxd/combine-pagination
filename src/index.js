@@ -195,14 +195,6 @@ export default ({ getters, sortKey, sortDirection = "desc" }) => {
     getNext,
     getNextForGetter,
     extractState,
-    injectState,
-    _getMeta,
-    _getSortKey,
-    _isAfter,
-    _isBefore,
-    _mergeData,
-    _shouldProcessPage,
-    _sortPage,
-    _trimPage
+    injectState
   };
 };
