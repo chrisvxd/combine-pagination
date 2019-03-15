@@ -5,9 +5,15 @@ import "@babel/polyfill";
  * */
 export default ({ getters, sortKey, sortDirection = "desc" }) => {
   let state = {
-    data: getters.map(() => []),
-    nextPageForGetters: getters.map(() => 0),
-    meta: {}
+    pages: getters.map(() => []),
+    getNext: {
+      data: getters.map(() => []),
+      meta: {},
+      nextPageForGetters: getters.map(() => 0)
+    },
+    getNextForGetter: {
+      nextPageForGetters: getters.map(() => 0)
+    }
   };
 
   const _getSortKey = hit => hit[sortKey];
@@ -68,8 +74,8 @@ export default ({ getters, sortKey, sortDirection = "desc" }) => {
     };
   };
 
-  const _shouldProcessPage = ({ data, nextPageForGetter, getterIndex }) =>
-    data[getterIndex].length === 0 && nextPageForGetter !== null;
+  const _shouldProcessPage = ({ data, page, getterIndex }) =>
+    data[getterIndex].length === 0 && page !== null;
 
   // NB Not hugely efficient
   const _tidyData = ({ data, trimmedPage }) =>
@@ -81,61 +87,100 @@ export default ({ getters, sortKey, sortDirection = "desc" }) => {
       []
     );
 
+  const _getData = async ({ getterIndex, page, userOptions }) => {
+    const getter = getters[getterIndex];
+    const cachedPage = state.pages[getterIndex][page];
+
+    let results;
+
+    if (cachedPage) {
+      results = cachedPage;
+    } else {
+      results = await getter(page, userOptions);
+      state.pages[getterIndex].push(results);
+    }
+
+    return results;
+  };
+
   const getNext = async userOptions => {
     // We recalculate these meta params on each page
-    state.meta.firstHit = null;
-    state.meta.earliestLastHit = null;
+    state.getNext.meta.firstHit = null;
+    state.getNext.meta.earliestLastHit = null;
 
     for (let getterIndex = 0; getterIndex < getters.length; getterIndex++) {
-      const getter = getters[getterIndex];
-      const nextPageForGetter = state.nextPageForGetters[getterIndex];
+      const page = state.getNext.nextPageForGetters[getterIndex];
 
       if (
         _shouldProcessPage({
-          data: state.data,
-          nextPageForGetter,
+          data: state.getNext.data,
+          page,
           getterIndex
         })
       ) {
-        const results = await getter(nextPageForGetter, userOptions);
+        const results = await _getData({
+          getterIndex,
+          page,
+          userOptions
+        });
 
         if (results.length > 0) {
-          state.data[getterIndex] = _sortPage(results);
-
-          state.meta = _getMeta({
-            currentMeta: state.meta,
+          state.getNext.data[getterIndex] = results;
+          state.getNext.nextPageForGetters[getterIndex] = page + 1;
+          state.getNext.meta = _getMeta({
+            currentMeta: state.getNext.meta,
             getterIndex,
             results
           });
-
-          state.nextPageForGetters[getterIndex] = nextPageForGetter + 1;
         } else {
-          state.nextPageForGetters[getterIndex] = null;
+          state.getNext.nextPageForGetters[getterIndex] = null;
         }
       } else {
-        if (state.data[getterIndex].length > 0) {
-          state.meta = _getMeta({
-            currentMeta: state.meta,
+        if (state.getNext.data[getterIndex].length > 0) {
+          state.getNext.meta = _getMeta({
+            currentMeta: state.getNext.meta,
             getterIndex,
-            results: state.data[getterIndex]
+            results: state.getNext.data[getterIndex]
           });
         }
       }
     }
 
-    const page = _mergeData(state.data);
+    const page = _mergeData(state.getNext.data);
 
     const trimmedPage =
       page.length > 0
         ? _trimPage({
             page,
-            meta: state.meta
+            meta: state.getNext.meta
           })
         : page;
 
-    state.data = _tidyData({ data: state.data, trimmedPage });
+    state.getNext.data = _tidyData({ data: state.getNext.data, trimmedPage });
 
     return trimmedPage;
+  };
+
+  const getNextForGetter = async (getterIndex, userOptions) => {
+    const page = state.getNextForGetter.nextPageForGetters[getterIndex];
+
+    if (page === null) {
+      return [];
+    }
+
+    const results = await _getData({
+      getterIndex,
+      page,
+      userOptions
+    });
+
+    if (results.length === 0) {
+      state.getNextForGetter.nextPageForGetters[getterIndex] = null;
+    } else {
+      state.getNextForGetter.nextPageForGetters[getterIndex] = page + 1;
+    }
+
+    return results;
   };
 
   const extractState = () => {
@@ -148,6 +193,7 @@ export default ({ getters, sortKey, sortDirection = "desc" }) => {
 
   return {
     getNext,
+    getNextForGetter,
     extractState,
     injectState,
     _getMeta,

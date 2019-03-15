@@ -207,4 +207,47 @@ describe("combine-paginators", () => {
       }
     });
   });
+
+  describe("getNextForGetter", () => {
+    it("should get next results for a specific getter", async () => {
+      const page = await combinedGetters.getNextForGetter(0);
+
+      expect(page).toEqual([modernHats[0], modernHats[1], modernHats[2]]);
+    });
+
+    it("should get next results from a specific getter, regardless of the getNext state", async () => {
+      await combinedGetters.getNext();
+      const page = await combinedGetters.getNextForGetter(0);
+
+      expect(page).toEqual([modernHats[0], modernHats[1], modernHats[2]]);
+    });
+
+    it("should get results for a specific getter, without interfering with getNext", async () => {
+      await combinedGetters.getNext();
+      await combinedGetters.getNextForGetter(1);
+      await combinedGetters.getNextForGetter(1);
+      const page = await combinedGetters.getNext();
+
+      expect(page).toEqual([oldHats[1], modernHats[3]]);
+    });
+
+    it("should return [] when next page is null", async () => {
+      await combinedGetters.injectState({
+        getNextForGetter: { nextPageForGetters: [null, null] }
+      });
+
+      const page = await combinedGetters.getNextForGetter(1);
+
+      expect(page).toEqual([]);
+    });
+
+    it("should return [] when pages are exhausted", async () => {
+      await combinedGetters.getNextForGetter(1);
+      await combinedGetters.getNextForGetter(1);
+
+      const page = await combinedGetters.getNextForGetter(1);
+
+      expect(page).toEqual([]);
+    });
+  });
 });
