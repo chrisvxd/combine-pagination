@@ -1,4 +1,16 @@
-# 0.1.0 (2019-03-13)
+# [0.2.0](https://github.com/chrisvxd/combine-pagination/compare/v0.1.0...v0.2.0) (2019-03-15)
+
+
+### Features
+
+* add extractState and injectState methods for SSR ([ca35af1](https://github.com/chrisvxd/combine-pagination/commit/ca35af1))
+* add method to get results for specific getter, using shared cache with getNext ([b41312a](https://github.com/chrisvxd/combine-pagination/commit/b41312a))
+* hide private methods from export ([a29cbb3](https://github.com/chrisvxd/combine-pagination/commit/a29cbb3))
+* support passing options into getNext() ([745063e](https://github.com/chrisvxd/combine-pagination/commit/745063e))
+
+
+
+# [0.1.0](https://github.com/chrisvxd/combine-pagination/compare/ce525d2...v0.1.0) (2019-03-13)
 
 
 ### Bug Fixes

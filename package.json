@@ -1,6 +1,6 @@
 {
   "name": "combine-pagination",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "A JavaScript library to paginate across multiple data sources at once, whilst retaining the sort order.",
   "homepage": "https://github.com/chrisvxd/combine-pagination",
   "license": "MIT",
@@ -77,6 +77,8 @@
   },
   "jest": {
     "collectCoverage": true,
-    "collectCoverageFrom": ["<rootDir>/src/**/*.{js,jsx,ts,tsx}"]
+    "collectCoverageFrom": [
+      "<rootDir>/src/**/*.{js,jsx,ts,tsx}"
+    ]
   }
 }
