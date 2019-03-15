@@ -4,7 +4,7 @@ import "@babel/polyfill";
  * combinePagination()
  * */
 export default ({ getters, sortKey, sortDirection = "desc" }) => {
-  const state = {
+  let state = {
     data: getters.map(() => []),
     nextPageForGetters: getters.map(() => 0),
     meta: {}
@@ -138,8 +138,18 @@ export default ({ getters, sortKey, sortDirection = "desc" }) => {
     return trimmedPage;
   };
 
+  const extractState = () => {
+    return state;
+  };
+
+  const injectState = async injectedState => {
+    state = injectedState;
+  };
+
   return {
     getNext,
+    extractState,
+    injectState,
     _getMeta,
     _getSortKey,
     _isAfter,
