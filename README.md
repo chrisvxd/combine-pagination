@@ -241,7 +241,7 @@ Intersecting ranges is a technique for finding values that overlap in two sets o
 - Intersection of [-1, 34] & [0, 4] is [0, 4]
 - Intersection of [0, 3] & [4, 4] is empty set
 
-combine-paginators uses a technique called Framed Range Intersecting (name is WIP), a type of intersecting that determines the leading data set, and intersects the other data sets within that.
+`combine-pagination` uses a technique called Framed Range Intersecting (name is WIP), a type of intersecting that determines the leading data set, and intersects the other data sets within that.
 
 Unlike normal range intersecting:
 
