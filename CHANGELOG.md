@@ -1,3 +1,15 @@
+# [0.3.0](https://github.com/chrisvxd/combine-pagination/compare/v0.2.0...v0.3.0) (2019-05-07)
+
+
+### Features
+
+* add support for custom sort method ([f8f7d24](https://github.com/chrisvxd/combine-pagination/commit/f8f7d24))
+* export helper method  for algolia's default relevance ranking ([1b3da92](https://github.com/chrisvxd/combine-pagination/commit/1b3da92))
+* support nested sort keys ([aa0ceae](https://github.com/chrisvxd/combine-pagination/commit/aa0ceae))
+* throw error if results are out of order ([7757b0c](https://github.com/chrisvxd/combine-pagination/commit/7757b0c))
+
+
+
 # [0.2.0](https://github.com/chrisvxd/combine-pagination/compare/v0.1.0...v0.2.0) (2019-03-15)
 
 
