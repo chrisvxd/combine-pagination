@@ -6,42 +6,42 @@ casual.seed(10);
 const modernHats = [
   {
     name: "Baseball Cap",
-    popularity: 95
+    sorting: { popularity: 95 }
   },
   {
     name: "Beanie",
-    popularity: 70
+    sorting: { popularity: 70 }
   },
   {
     name: "Golf",
-    popularity: 20
+    sorting: { popularity: 20 }
   },
   {
     name: "Other",
-    popularity: 10
+    sorting: { popularity: 10 }
   }
 ];
 
 const oldHats = [
   {
     name: "Top Hat",
-    popularity: 60
+    sorting: { popularity: 60 }
   },
   {
     name: "Beret",
-    popularity: 15
+    sorting: { popularity: 15 }
   },
   {
     name: "Bowler Cap",
-    popularity: 9
+    sorting: { popularity: 9 }
   },
   {
     name: "Sombrero",
-    popularity: 5
+    sorting: { popularity: 5 }
   },
   {
     name: "Stetson",
-    popularity: 2
+    sorting: { popularity: 2 }
   }
 ];
 
@@ -57,7 +57,7 @@ describe("combine-paginators", () => {
         page => getData(modernHats, page),
         page => getData(oldHats, page)
       ],
-      sortKey: "popularity"
+      sortKey: "sorting.popularity"
     });
   });
 
@@ -65,10 +65,10 @@ describe("combine-paginators", () => {
     it("is valid test data, generating out of order results", () => {
       expect([
         ...[...getData(modernHats, 0), ...getData(oldHats, 0)].sort(
-          (a, b) => b.popularity - a.popularity
+          (a, b) => b.sorting.popularity - a.sorting.popularity
         ),
         ...[...getData(modernHats, 1), ...getData(oldHats, 1)].sort(
-          (a, b) => b.popularity - a.popularity
+          (a, b) => b.sorting.popularity - a.sorting.popularity
         )
       ]).toEqual([
         modernHats[0],
@@ -162,12 +162,14 @@ describe("combine-paginators", () => {
             Array.from(
               { length: casual.integer(minimumLength, maximumLength) },
               () => ({
-                popularity: casual.integer(
-                  minimumPopularity,
-                  maximumPopularityForRun
-                )
+                sorting: {
+                  popularity: casual.integer(
+                    minimumPopularity,
+                    maximumPopularityForRun
+                  )
+                }
               })
-            ).sort((a, b) => b.popularity - a.popularity)
+            ).sort((a, b) => b.sorting.popularity - a.sorting.popularity)
         );
 
         const pageSizeForDataSets = Array.from(
@@ -179,7 +181,7 @@ describe("combine-paginators", () => {
 
         const expectedResult = dataSets
           .reduce((acc, dataSet) => [...acc, ...dataSet], [])
-          .sort((a, b) => b.popularity - a.popularity);
+          .sort((a, b) => b.sorting.popularity - a.sorting.popularity);
 
         const getters = dataSets.map((dataSet, index) => page =>
           getData(dataSet, page, pageSizeForDataSets[index])
@@ -187,7 +189,7 @@ describe("combine-paginators", () => {
 
         const combined = combinePagination({
           getters,
-          sortKey: "popularity"
+          sortKey: "sorting.popularity"
         });
 
         let lastResult;

@@ -1,5 +1,7 @@
 import "@babel/polyfill";
 
+const get = (obj, accessor) => accessor.split(".").reduce((o, i) => o[i], obj);
+
 /*
  * combinePagination()
  * */
@@ -16,7 +18,7 @@ export default ({ getters, sortKey, sortDirection = "desc" }) => {
     }
   };
 
-  const _getSortKey = hit => hit[sortKey];
+  const _getSortKey = hit => get(hit, sortKey);
 
   const _isAfter = (a, b, { eq = true } = {}) => {
     if (sortDirection === "asc") {
@@ -42,7 +44,8 @@ export default ({ getters, sortKey, sortDirection = "desc" }) => {
       : _getSortKey(a) > _getSortKey(b);
   };
 
-  const _sortPage = hits => hits.sort((a, b) => b[sortKey] - a[sortKey]);
+  const _sortPage = hits =>
+    hits.sort((a, b) => get(b, sortKey) - get(a, sortKey));
 
   const _mergeData = data =>
     _sortPage(
