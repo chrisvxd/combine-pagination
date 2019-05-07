@@ -3,6 +3,45 @@ import "@babel/polyfill";
 const get = (obj, accessor) => accessor.split(".").reduce((o, i) => o[i], obj);
 
 /*
+ * sortAlgolia(a: object, b: object, includeGeo: bool)
+ *
+ * Custom sort method for algolia searches using the default algolia search relevance
+ **/
+export const sortAlgolia = (a, b, includeGeo = true) => {
+  const rankings = [];
+
+  rankings.push({ name: "nbTypos", goal: "lowest" });
+
+  // Only compare geo  if not remote
+  if (includeGeo) {
+    rankings.push({ name: "geoDistance", goal: "lowest" });
+    rankings.push({ name: "geoPrecision", goal: "highest" });
+  }
+
+  rankings.push({ name: "firstMatchedWord", goal: "lowest" });
+  rankings.push({ name: "words", goal: "highest" });
+  rankings.push({ name: "filters", goal: "highest" });
+  rankings.push({ name: "proximityDistance", goal: "lowest" });
+  rankings.push({ name: "nbExactWords", goal: "highest" });
+  rankings.push({ name: "userScore", goal: "highest" });
+
+  for (let index = 0; index < rankings.length; index++) {
+    const { name, goal } = rankings[index];
+
+    const score =
+      goal === "lowest"
+        ? a._rankingInfo[name] - b._rankingInfo[name]
+        : b._rankingInfo[name] - a._rankingInfo[name];
+
+    if (score !== 0) {
+      return score;
+    }
+  }
+
+  return 0;
+};
+
+/*
  * combinePagination()
  * */
 export default ({ getters, sortKey, sort, sortDirection = "desc" }) => {

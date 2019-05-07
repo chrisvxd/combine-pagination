@@ -42,9 +42,9 @@ const pageOne = await combinedGetters.getNext();
 const pageTwo = await combinedGetters.getNext();
 ```
 
-### Algolia
+### Algolia - custom sorting
 
-Paginate data from two distinct algolia queries, each with a different keyword.
+Paginate data from two distinct algolia queries where the Algolia Index is sorted by a custom field. Each query is using a different keyword.
 
 ```js
 const index = algoliasearch({
@@ -53,14 +53,45 @@ const index = algoliasearch({
 
 const combinedGetters = combinePagination({
   getters: [
-    async page => (await index.query({ page, hitsPerPage: 15, query: "Baseball cap" })).hits,
-    async page => (await index.query({ page, hitsPerPage: 15, query: "Top hat" })).hits
+    async page =>
+      (await index.query({ page, hitsPerPage: 15, query: "Baseball cap" }))
+        .hits,
+    async page =>
+      (await index.query({ page, hitsPerPage: 15, query: "Top hat" })).hits
   ],
   sortKey: "popularity"
 });
 
 const pageOne = await combinedGetters.getNext();
 const pageTwo = await combinedGetters.getNext();
+```
+
+### Algolia - default sorting
+
+Paginate data from two distinct algolia queries where the Algolia Index is sorted using Algolia's default criteria.
+
+This approach uses a custom `sort` method that attempts to match [Algolia's sorting algorithm](https://www.algolia.com/doc/guides/managing-results/must-do/custom-ranking/?language=javascript#the-ranking-criteria).
+
+> The `sortAlgolia` sort method used in this example is experimental. You might need to implement your own if using a custom ranking method.
+
+```js
+import { sortAlgolia } from "combine-pagination";
+
+const index = algoliasearch({
+  getRankingInfo: true // Ask algolia for ranking info
+  //...
+}).initIndex("hats");
+
+const combinedGetters = combinePagination({
+  getters: [
+    async page =>
+      (await index.query({ page, hitsPerPage: 15, query: "Baseball cap" }))
+        .hits,
+    async page =>
+      (await index.query({ page, hitsPerPage: 15, query: "Top hat" })).hits
+  ],
+  sort: sortAlgolia
+});
 ```
 
 ## The Problem
