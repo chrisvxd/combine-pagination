@@ -5,7 +5,7 @@ const get = (obj, accessor) => accessor.split(".").reduce((o, i) => o[i], obj);
 /*
  * combinePagination()
  * */
-export default ({ getters, sortKey, sortDirection = "desc" }) => {
+export default ({ getters, sortKey, sort, sortDirection = "desc" }) => {
   let state = {
     pages: getters.map(() => []),
     getNext: {
@@ -21,6 +21,10 @@ export default ({ getters, sortKey, sortDirection = "desc" }) => {
   const _getSortKey = hit => get(hit, sortKey);
 
   const _isAfter = (a, b, { eq = true } = {}) => {
+    if (sort) {
+      return eq ? sort(a, b) >= 0 : sort(a, b) > 0;
+    }
+
     if (sortDirection === "asc") {
       return eq
         ? _getSortKey(a) >= _getSortKey(b)
@@ -33,6 +37,10 @@ export default ({ getters, sortKey, sortDirection = "desc" }) => {
   };
 
   const _isBefore = (a, b, { eq = true } = {}) => {
+    if (sort) {
+      return eq ? sort(a, b) <= 0 : sort(a, b) < 0;
+    }
+
     if (sortDirection === "asc") {
       return eq
         ? _getSortKey(a) <= _getSortKey(b)
@@ -45,7 +53,9 @@ export default ({ getters, sortKey, sortDirection = "desc" }) => {
   };
 
   const _sortPage = hits =>
-    hits.sort((a, b) => get(b, sortKey) - get(a, sortKey));
+    sort
+      ? hits.sort(sort)
+      : hits.sort((a, b) => get(b, sortKey) - get(a, sortKey));
 
   const _mergeData = data =>
     _sortPage(
