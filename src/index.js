@@ -119,16 +119,21 @@ export default ({ getters, sortKey, sort, sortDirection = "desc" }) => {
   };
 
   const _getMeta = ({ currentMeta, results }) => {
-    const { earliestLastHit, firstHit } = currentMeta;
     const lastHitForGetter = results[results.length - 1];
+    const {
+      earliestLastHit = lastHitForGetter,
+      firstHit = results[0]
+    } = currentMeta;
 
     return {
-      firstHit:
-        !firstHit || _isAfter(firstHit, results[0]) ? results[0] : firstHit,
-      earliestLastHit:
-        !earliestLastHit || _isBefore(lastHitForGetter, earliestLastHit)
-          ? lastHitForGetter
-          : earliestLastHit
+      firstHit: _isBefore(results[0], firstHit, { eq: false })
+        ? results[0]
+        : firstHit,
+      earliestLastHit: _isBefore(lastHitForGetter, earliestLastHit, {
+        eq: false
+      })
+        ? lastHitForGetter
+        : earliestLastHit
     };
   };
 
@@ -163,8 +168,8 @@ export default ({ getters, sortKey, sort, sortDirection = "desc" }) => {
 
   const getNext = async userOptions => {
     // We recalculate these meta params on each page
-    state.getNext.meta.firstHit = null;
-    state.getNext.meta.earliestLastHit = null;
+    state.getNext.meta.firstHit = undefined;
+    state.getNext.meta.earliestLastHit = undefined;
 
     for (let getterIndex = 0; getterIndex < getters.length; getterIndex++) {
       const page = state.getNext.nextPageForGetters[getterIndex];
