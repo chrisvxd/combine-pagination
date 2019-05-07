@@ -56,6 +56,12 @@ export default ({ getters, sortKey, sortDirection = "desc" }) => {
     const { earliestLastHit, firstHit } = meta;
     // const lastHitForShortestPage = shortestPage[shortestPage.length - 1];
 
+    if (!_isAfter(earliestLastHit, firstHit)) {
+      throw new Error(
+        "combined-pagination Error. Order of results from data getters does not match sortKey and sortDirection."
+      );
+    }
+
     const trimmedPage = page.filter(
       hit => _isAfter(hit, firstHit) && _isBefore(hit, earliestLastHit)
     );
