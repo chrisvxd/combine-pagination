@@ -1,3 +1,12 @@
+## [0.3.1](https://github.com/chrisvxd/combine-pagination/compare/v0.3.0...v0.3.1) (2019-05-08)
+
+
+### Bug Fixes
+
+* remove overly aggressive error that would trigger unexpectedly ([7169181](https://github.com/chrisvxd/combine-pagination/commit/7169181))
+
+
+
 # [0.3.0](https://github.com/chrisvxd/combine-pagination/compare/v0.2.0...v0.3.0) (2019-05-07)
 
 
