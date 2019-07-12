@@ -1,3 +1,7 @@
+## [0.3.2](https://github.com/chrisvxd/combine-pagination/compare/v0.3.1...v0.3.2) (2019-07-12)
+
+
+
 ## [0.3.1](https://github.com/chrisvxd/combine-pagination/compare/v0.3.0...v0.3.1) (2019-05-08)
 
 

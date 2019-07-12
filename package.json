@@ -1,6 +1,6 @@
 {
   "name": "combine-pagination",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "A JavaScript library to paginate across multiple data sources at once, whilst retaining the sort order.",
   "homepage": "https://github.com/chrisvxd/combine-pagination",
   "license": "MIT",
