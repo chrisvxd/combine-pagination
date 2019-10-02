@@ -94,7 +94,9 @@ export default ({ getters, sortKey, sort, sortDirection = "desc" }) => {
   const _sortPage = hits =>
     sort
       ? hits.sort(sort)
-      : hits.sort((a, b) => (sortDirection === 'asc') ? get(a, sortKey) - get(b, sortKey) : get(b, sortKey) - get(a, sortKey));
+      : hits.sort((a, b) => (sortDirection === 'asc') 
+        ? get(a, sortKey) - get(b, sortKey) 
+        : get(b, sortKey) - get(a, sortKey));
 
   const _mergeData = data =>
     _sortPage(
