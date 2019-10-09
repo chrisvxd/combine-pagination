@@ -140,7 +140,7 @@ describe("combine-paginators", () => {
           page => getData(reversedOldHats, page)
         ],
         sortKey: "sorting.popularity",
-        sortDirection: 'asc'
+        sortDirection: "asc"
       });
 
       const page = await combinedGettersWithSorting.getNext();
