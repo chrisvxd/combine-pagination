@@ -130,6 +130,37 @@ describe("combine-paginators", () => {
       expect(page).toEqual([]);
     });
 
+    it("should return data in correct order when using ascending sort direction", async () => {
+      const reversedModernHats = [...modernHats].reverse();
+      const reversedOldHats = [...oldHats].reverse();
+
+      const combinedGettersWithSorting = combinePagination({
+        getters: [
+          page => getData(reversedModernHats, page),
+          page => getData(reversedOldHats, page)
+        ],
+        sortKey: "sorting.popularity",
+        sortDirection: 'asc'
+      });
+
+      const page = await combinedGettersWithSorting.getNext();
+
+      expect(page).toEqual([
+        reversedOldHats[0],
+        reversedOldHats[1],
+        reversedOldHats[2]
+      ]);
+
+      const nextPage = await combinedGettersWithSorting.getNext();
+
+      expect(nextPage).toEqual([
+        reversedModernHats[0],
+        reversedOldHats[3],
+        reversedModernHats[1],
+        reversedOldHats[4]
+      ]);
+    });
+
     // Randomly generating data sets ensures robustness against edge cases
     it("should return all results in order for 1000 random data sets", async () => {
       const minimumLength = 1;
